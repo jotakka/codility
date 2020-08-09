@@ -3,3 +3,9 @@
 ################################################################################
 
 /bin/Debug/netcoreapp3.1
+/obj
+*.csproj
+/codility.csproj.user
+/Program.cs
+/.vs/codility/v16
+/codility.sln
