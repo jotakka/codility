@@ -4,35 +4,54 @@ using System.Text;
 
 namespace codility.Lessons.Lesson6 {
    class NumberOfDiscIntersections {
+      public class BorderPoint {
+         public long point { get; set; }
+         public bool isBeginning { get; set; }
+
+      }
+
       public int solution(int[] A) {
+
+         if (A.Length == 0) return 0;
+
          var length = A.Length;
-         var points = new KeyValuePair<int, long>[2 * length];
-         for (long i = 0; i < length; i++) {
-            points[2 * i] = new KeyValuePair<int, long>((int)i, i + (long)A[i]);
-            points[2 * i + 1] = new KeyValuePair<int, long>((int)i, i - (long)A[i]);
+         var points = new BorderPoint[2 * length];
+
+         for (int i = 0; i < length; i++) {
+            points[2 * i] = new BorderPoint() { isBeginning = true, point = (long)i - (long)A[i] };
+            points[2 * i + 1] = new BorderPoint() { isBeginning = false, point = (long)i + (long)A[i] };
+
          }
-         Array.Sort(points, (a, b) => (int)(a.Value - b.Value));
 
+         Array.Sort(points, (p1, p2) => compare(p1, p2));
 
-         var pointSet = new HashSet<int>();
-         var inside = 0;
-         var total = 0;
+         var inCircles = 0;
+         var intercect = 0;
 
-         foreach (var a in points) {
-            if (pointSet.Contains(a.Key)) {
-               pointSet.Remove(a.Key);
-               inside--;
+         for (int i = 0; i < 2 * length - 1; i++) {
+            if (points[i].isBeginning) {
+               intercect += inCircles;
+               inCircles++;
             } else {
-               pointSet.Add(a.Key);
-               total += inside;
-               if (total > 10000000) { return -1; };
-               inside++;
+               inCircles--;
             }
 
+            if (intercect > 10e6) { return -1; }
+         }
 
-         };
-         return total;
+         return intercect;
 
+      }
+
+
+      public int compare(BorderPoint first, BorderPoint second) {
+         int firstComparison = first.point.CompareTo(second.point);
+
+         if (firstComparison != 0) {
+            return firstComparison;
+         } else {
+            return second.isBeginning.CompareTo(first.isBeginning);
+         }
       }
    }
 }
